@@ -9,6 +9,7 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
+#include <ngx_string.h>
 
 static ngx_http_module_t ngx_http_openrtb_module_ctx = {
     NULL,  /* preconfiguration */
@@ -26,17 +27,17 @@ static ngx_http_module_t ngx_http_openrtb_module_ctx = {
 
 static ngx_int_t ngx_http_openrtb_handler(ngx_http_request_t *r){
     if (r->uri_changes == 11){ // redirect will let header be setted twice. nginx redirect max 11 times.
-        ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "here!");
-        ngx_table_elt_t *h = ngx_list_push(&r->headers_out.headers);
-        if (h==NULL)return NGX_ERROR;
-
-        ngx_str_t key = ngx_string("openrtb");
-        ngx_str_t val = ngx_string("test");
-        h->key = key;
-        h->value = val;
-        h->hash = 1;
+        ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "debug start. fmt supported here");
+        if (r->unparsed_uri.len > 7 && ngx_strstr(r->unparsed_uri.data,"openrtb")){
+            ngx_table_elt_t *h = ngx_list_push(&r->headers_out.headers);
+            if (h==NULL)return NGX_ERROR;
+            ngx_str_t key = ngx_string("openrtb");
+            ngx_str_t val = ngx_string("ok");
+            h->key = key;
+            h->value = val;
+            h->hash = 1;
+        }
     }
-
     return NGX_DECLINED;
 }
 
