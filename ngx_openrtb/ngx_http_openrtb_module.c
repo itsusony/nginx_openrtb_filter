@@ -25,15 +25,17 @@ static ngx_http_module_t ngx_http_openrtb_module_ctx = {
 };
 
 static ngx_int_t ngx_http_openrtb_handler(ngx_http_request_t *r){
-    ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "here!");
-    ngx_table_elt_t *h = ngx_list_push(&r->headers_out.headers);
-    if (h==NULL)return NGX_ERROR;
+    if (r->uri_changes == 11){ // redirect will let header be setted twice. nginx redirect max 11 times.
+        ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "here!");
+        ngx_table_elt_t *h = ngx_list_push(&r->headers_out.headers);
+        if (h==NULL)return NGX_ERROR;
 
-    ngx_str_t key = ngx_string("openrtb");
-    ngx_str_t val = ngx_string("test");
-    h->key = key;
-    h->value = val;
-    h->hash = 1;
+        ngx_str_t key = ngx_string("openrtb");
+        ngx_str_t val = ngx_string("test");
+        h->key = key;
+        h->value = val;
+        h->hash = 1;
+    }
 
     return NGX_DECLINED;
 }
