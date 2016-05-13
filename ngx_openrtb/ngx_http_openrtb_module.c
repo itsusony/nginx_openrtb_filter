@@ -29,10 +29,19 @@ static ngx_int_t ngx_http_openrtb_handler(ngx_http_request_t *r){
     if (r->uri_changes == 11){ // redirect will let header be setted twice. nginx redirect max 11 times.
         ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "debug start. fmt supported here");
         if (r->unparsed_uri.len > 7 && ngx_strstr(r->unparsed_uri.data,"openrtb")){
-            ngx_table_elt_t *h = ngx_list_push(&r->headers_out.headers);
-            if (h==NULL)return NGX_ERROR;
+
             ngx_str_t key = ngx_string("openrtb");
             ngx_str_t val = ngx_string("ok");
+
+            ngx_table_elt_t *h = ngx_list_push(&r->headers_in.headers);
+            if (h==NULL)return NGX_ERROR;
+            h->key = key;
+            h->value = val;
+            h->hash = 1;
+
+            // set headers_out's header for debug
+            h = ngx_list_push(&r->headers_out.headers);
+            if (h==NULL)return NGX_ERROR;
             h->key = key;
             h->value = val;
             h->hash = 1;
