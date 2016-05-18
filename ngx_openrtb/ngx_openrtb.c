@@ -11,7 +11,7 @@
 #include <ngx_http.h>
 #include <ngx_string.h>
 
-static ngx_http_module_t ngx_http_openrtb_module_ctx = {
+static ngx_http_module_t ngx_openrtb_module_ctx = {
     NULL,  /* preconfiguration */
     NULL,  /* postconfiguration */
 
@@ -25,7 +25,7 @@ static ngx_http_module_t ngx_http_openrtb_module_ctx = {
     NULL
 };
 
-static ngx_int_t ngx_http_openrtb_handler(ngx_http_request_t *r){
+static ngx_int_t ngx_openrtb_handler(ngx_http_request_t *r){
     if (r->uri_changes == 11){ // redirect will let header be setted twice. nginx redirect max 11 times.
         ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "debug start. fmt supported here");
         if (r->unparsed_uri.len > 7 && ngx_strstr(r->unparsed_uri.data,"openrtb")){
@@ -50,26 +50,26 @@ static ngx_int_t ngx_http_openrtb_handler(ngx_http_request_t *r){
     return NGX_DECLINED;
 }
 
-static char* ngx_http_openrtb(ngx_conf_t *cf, ngx_command_t *cmd, void *conf){
+static char* ngx_openrtb(ngx_conf_t *cf, ngx_command_t *cmd, void *conf){
     ngx_http_core_loc_conf_t *clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    clcf->handler = ngx_http_openrtb_handler;
+    clcf->handler = ngx_openrtb_handler;
     return NGX_CONF_OK;
 }
 
-static ngx_command_t  ngx_http_openrtb_commands[] = {
+static ngx_command_t  ngx_openrtb_commands[] = {
     { ngx_string("openrtb"),
       NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
-      ngx_http_openrtb,
+      ngx_openrtb,
       NGX_HTTP_LOC_CONF_OFFSET,
       0,
       NULL },
       ngx_null_command
 };
 
-ngx_module_t ngx_http_openrtb_module = {
+ngx_module_t ngx_openrtb_module = {
     NGX_MODULE_V1,
-    &ngx_http_openrtb_module_ctx,
-    ngx_http_openrtb_commands,
+    &ngx_openrtb_module_ctx,
+    ngx_openrtb_commands,
     NGX_HTTP_MODULE,
     NULL,                                  /* init master */
     NULL,                                  /* init module */
